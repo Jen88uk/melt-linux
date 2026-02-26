@@ -1,0 +1,31 @@
+{
+  "name": "melt",
+  "version": "1.0.0",
+  "description": "Full melt hash control - Terminal-based Puffco controller",
+  "main": "src/index.js",
+  "bin": {
+    "melt": "./bin/melt.js"
+  },
+  "scripts": {
+    "start": "node bin/melt.js",
+    "sniffer": "electron .",
+    "link": "npm link"
+  },
+  "dependencies": {
+    "@abandonware/noble": "^1.9.2-25",
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.11.0",
+    "chalk": "^4.1.2",
+    "gradient-string": "^2.0.2",
+    "figlet": "^1.7.0",
+    "cli-spinners": "^2.9.2",
+    "ora": "^5.4.1",
+    "commander": "^12.0.0",
+    "better-sqlite3": "^9.4.3",
+    "conf": "^10.2.0",
+    "boxen": "^5.1.2"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}

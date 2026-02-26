@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Electron sniffer app (not included in repo)
+main.js
+index.html
+renderer-preload.js
+ble-capture/
+
+# Data
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude
+.claude/
+
+# Planning docs
+IMPLEMENTATION_PLAN.md
+
+# Optional: lock file (uncomment if you want to include it)
+# package-lock.json
