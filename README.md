@@ -34,6 +34,10 @@ melt reset        # fix connection issues
 - Node.js 18+
 - Puffco Proxy (tested on latest firmware)
 
+## Screenshot
+<img width="705" height="1101" alt="image" src="https://github.com/user-attachments/assets/ae2bc2af-42ea-4532-b4d4-c4fa80fb23b0" />
+
+
 ## Disclaimer
 
 Unofficial tool. Not affiliated with Puffco. Use at your own risk.
