@@ -69,6 +69,8 @@ Full credit for the original application, protocol work, and UI goes to ryleyio.
 
 Unofficial tool. Not affiliated with Puffco. Use at your own risk.
 
+If you'd like to support the work that made this possible, you can buy the **original author (ryleyio)** a coffee:
+
 <a href="https://buymeacoffee.com/ryleyio" target="_blank">
   <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" 
        alt="Buy Me A Coffee" 
