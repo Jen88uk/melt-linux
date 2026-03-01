@@ -2,8 +2,11 @@
 
 /**
  * MELT - Full Melt Hash Control
- * Terminal-based Puffco controller
+ * Terminal-based Puffco controller (Linux port)
  */
+
+// Default to hci0 on Linux unless overridden by the user (e.g. NOBLE_HCI_DEVICE_ID=1 melt status)
+process.env.NOBLE_HCI_DEVICE_ID = process.env.NOBLE_HCI_DEVICE_ID || '0';
 
 const { program } = require('commander');
 const chalk = require('chalk');
@@ -210,7 +213,7 @@ program
         clearInterval(monitor);
         console.log();
         console.log(chalk.yellow('\n  stopping...\n'));
-        try { await commands.stopHeat(); } catch (e) {}
+        try { await commands.stopHeat(); } catch (e) { }
         await connection.disconnect();
         process.exit(0);
       });
@@ -309,7 +312,7 @@ program
     try {
       execSync('pkill -f "melt.js" 2>/dev/null || true', { stdio: 'ignore' });
       execSync('pkill -f "proxy.js" 2>/dev/null || true', { stdio: 'ignore' });
-    } catch (e) {}
+    } catch (e) { }
 
     await new Promise(r => setTimeout(r, 500));
 
