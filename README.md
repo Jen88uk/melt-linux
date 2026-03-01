@@ -69,7 +69,7 @@ NOBLE_HCI_DEVICE_ID=1 melt status
 - Puffco Proxy (tested on latest firmware)
 
 ## Screenshot
-![melt screenshot](ReadMe_Screenshot.png)
+![melt screenshot](https://github.com/Jen88uk/melt-linux/releases/download/screenshot-assets/ReadMe_Screenshot.png)
 
 ## Credits
 
