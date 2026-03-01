@@ -2,12 +2,9 @@
 
 ## Supported Versions
 
-Currently, only the latest release of `melt-linux` is actively supported with security updates.
+Currently, `melt-linux` does not use formal semantic versioning or provide pre-built release packages.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| v1.x.x  | :white_check_mark: |
-| < v1.0  | :x:                |
+The actively supported version is the latest commit on the `main` branch. If you discover a vulnerability, please ensure it exists in the current `main` branch before submitting a report.
 
 ## Reporting a Vulnerability
 
