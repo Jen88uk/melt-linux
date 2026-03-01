@@ -1,6 +1,6 @@
 # melt
 
-NOTE: THIS APPLICATION IS UNDER ACTIVE DEVELOPMENT AND IS CURRENTLY NOT WORKING AS INTENDED (BLUETOOTH PAIRING ISSUES), THERFORE THERE IS A STRONG LIKELIHOOD THIS ALSO WON'T WORK FOR YOU YET EITHER. I AM ACTIVELY WORKING ON THESE ISSUES, HOWEVER FEEL FREE TO TEST AS YMMV. CURRENTLY THE INSTALLER IS VERIFIED TO WORK AND THE CLI TOOL DOES RUN WHEN INVOKED BUT COMMUNICATION WITH THE PROXY IS BROKEN (FOR ME AT LEAST)
+> **⚠️ Status:** The BLE library has been swapped from `@abandonware/noble` to `@stoprocent/noble` for better Linux support. The installer and CLI are verified to work; live device communication is pending further testing. YMMV — please report any issues.
 
 Full melt hash control. Terminal-based Puffco controller.
 
@@ -74,7 +74,7 @@ NOBLE_HCI_DEVICE_ID=1 melt status
 ## Credits
 
 `melt` was originally created by **[ryleyio](https://github.com/ryleyio)** for macOS.  
-This repository is a Linux port, adapted to run on Arch-based systems using `@abandonware/noble` and BlueZ.  
+This repository is a Linux port, adapted to run on Arch-based systems using `@stoprocent/noble` and BlueZ.  
 Full credit for the original application, protocol work, and UI goes to ryleyio.
 
 ## Disclaimer
