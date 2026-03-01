@@ -32,6 +32,14 @@ The installer will:
 
 > **Note:** You will need `sudo` access. Node.js 18+ must be installed beforehand (`sudo pacman -S nodejs npm`).
 
+## Uninstall
+
+```bash
+./uninstall.sh
+```
+
+Removes only what the melt installer added: the global `melt` command, the pacman hook, the udev rule, and `node_modules`. It will **not** remove Node.js, npm, bluez, or the Bluetooth service. You will be prompted before BLE capabilities are removed from Node.js, in case other tools depend on them.
+
 ## Usage
 
 ```bash
