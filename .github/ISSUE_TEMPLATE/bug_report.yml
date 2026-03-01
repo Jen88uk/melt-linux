@@ -1,0 +1,77 @@
+name: Bug Report
+description: Report a bug to help us improve melt-linux
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please note that Bluetooth Low Energy (BLE) on Linux can be finicky. Ensure your Puffco device is nearby, powered on, and paired if necessary.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the bug is.
+      placeholder: When I run `melt heat 0`, it hangs at "connecting..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Exact steps to reproduce the behavior.
+      placeholder: |
+        1. Turn on Proxy
+        2. Run `melt status`
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Connection succeeds and prints battery level.
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS / Distribution
+      description: What Linux distribution and version are you using?
+      placeholder: Arch Linux (kernel 6.6)
+    validations:
+      required: true
+      
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: Output of `node -v`
+      placeholder: v20.10.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: bluez-info
+    attributes:
+      label: Bluetooth Info
+      description: If this is a connection issue, please provide details about your Bluetooth adapter (e.g. output of `hciconfig -a` or `bluetoothctl show`).
+      placeholder: |
+        hci0:   Type: Primary  Bus: USB
+        ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context about the problem here (e.g., error logs).
+    validations:
+      required: false
