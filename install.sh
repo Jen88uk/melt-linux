@@ -175,10 +175,19 @@ EOF
   DID_UDEV_RULE=true
   success "udev rule created at $UDEV_FILE"
 
+  # Ensure the bluetooth group exists (not always created on Arch if bluez was pre-installed)
+  if ! getent group bluetooth &>/dev/null; then
+    info "Creating 'bluetooth' group..."
+    sudo groupadd bluetooth
+    success "bluetooth group created"
+  fi
+
+  # Add user to bluetooth group if not already a member
   if ! groups "$USER" | grep -q '\bbluetooth\b'; then
     info "Adding $USER to the 'bluetooth' group..."
-    sudo usermod -aG bluetooth "$USER"
-    warn "You must log out and back in for group membership to take effect."
+    sudo usermod -aG bluetooth "$USER" && \
+      warn "You must log out and back in for group membership to take effect." || \
+      warn "Could not add $USER to bluetooth group — you may need to do this manually."
   fi
 else
   success "udev rule already exists — skipping"
