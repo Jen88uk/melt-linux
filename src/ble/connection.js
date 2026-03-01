@@ -170,10 +170,23 @@ class PuffcoConnection extends EventEmitter {
 
   _onDiscover(peripheral) {
     const name = peripheral.advertisement?.localName || '';
-    if (name.toLowerCase().includes('proxy')) {
+    const serviceUuids = (peripheral.advertisement?.serviceUuids || [])
+      .map(u => u.toLowerCase().replace(/-/g, ''));
+
+    // Primary match: identify by Puffco's known BLE service UUID.
+    // This handles devices that don't advertise "proxy" in their name
+    // (e.g. the device is named after the user's custom profile name).
+    const PUFFCO_SERVICE_UUID = 'e276967fea8a478aa92ed78f5dd15dd5';
+    const isPuffco = serviceUuids.includes(PUFFCO_SERVICE_UUID);
+
+    // Fallback: original name-based match for proxy-mode devices
+    const isProxy = name.toLowerCase().includes('proxy');
+
+    if (isPuffco || isProxy) {
       this.emit('discovered', peripheral);
     }
   }
+
 
   async _discoverServices() {
     return new Promise((resolve, reject) => {
@@ -234,7 +247,7 @@ class PuffcoConnection extends EventEmitter {
 
     // Also subscribe to notify_alt characteristic (43312cd1-7d34-46ce-a7d3-0a98fd9b4cb8)
     const notifyAltChar = this.characteristics['43312cd17d3446cea7d30a98fd9b4cb8'] ||
-                          this.characteristics['43312cd1-7d34-46ce-a7d3-0a98fd9b4cb8'];
+      this.characteristics['43312cd1-7d34-46ce-a7d3-0a98fd9b4cb8'];
     if (notifyAltChar) {
       await new Promise((resolve, reject) => {
         notifyAltChar.subscribe((err) => {
