@@ -2,7 +2,7 @@
  * BLE Connection Manager for Puffco Proxy
  */
 
-const noble = require('@abandonware/noble');
+const noble = require('@stoprocent/noble');
 const EventEmitter = require('events');
 const {
   SERVICES,

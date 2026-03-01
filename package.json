@@ -16,18 +16,18 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@abandonware/noble": "^1.9.2-25",
+    "@stoprocent/noble": "^2.0.0",
+    "better-sqlite3": "^12.6.2",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
+    "boxen": "^5.1.2",
     "chalk": "^4.1.2",
-    "gradient-string": "^2.0.2",
-    "figlet": "^1.7.0",
     "cli-spinners": "^2.9.2",
-    "ora": "^5.4.1",
     "commander": "^12.0.0",
-    "better-sqlite3": "^12.6.2",
     "conf": "^10.2.0",
-    "boxen": "^5.1.2"
+    "figlet": "^1.7.0",
+    "gradient-string": "^2.0.2",
+    "ora": "^5.4.1"
   },
   "devDependencies": {
     "electron": "^28.0.0"

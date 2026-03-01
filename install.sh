@@ -118,14 +118,14 @@ success "npm dependencies installed"
 # 6. Grant BLE permissions to Node.js via setcap
 # ─────────────────────────────────────────────────────────
 
-info "Granting BLE raw socket permissions to Node.js..."
+info "Granting BLE raw socket permissions to Node.js (@stoprocent/noble requires cap_net_raw)..."
 NODE_REAL="$(readlink -f "$(which node)")"
 
 EXISTING_CAPS="$(getcap "$NODE_REAL" 2>/dev/null || true)"
 if echo "$EXISTING_CAPS" | grep -q "cap_net_raw"; then
   success "BLE capabilities already set on $NODE_REAL — skipping"
 else
-  sudo setcap cap_net_raw,cap_net_admin=eip "$NODE_REAL"
+  sudo setcap cap_net_raw+eip "$NODE_REAL"
   DID_SETCAP=true
   success "BLE permissions granted to $NODE_REAL"
   warn "NOTE: upgrading nodejs via pacman will strip this capability."
@@ -150,7 +150,7 @@ Target = nodejs
 [Action]
 Description = Re-applying BLE capabilities to Node.js for melt...
 When = PostTransaction
-Exec = /bin/bash -c 'setcap cap_net_raw,cap_net_admin=eip "$(readlink -f "$(which node)")"'
+Exec = /bin/bash -c 'setcap cap_net_raw+eip "$(readlink -f "$(which node)")"'
 NeedsTargets
 EOF
   DID_PACMAN_HOOK=true

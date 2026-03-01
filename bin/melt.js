@@ -5,7 +5,8 @@
  * Terminal-based Puffco controller (Linux port)
  */
 
-// Default to hci0 on Linux unless overridden by the user (e.g. NOBLE_HCI_DEVICE_ID=1 melt status)
+// Default to hci0 on Linux unless overridden by the user (e.g. NOBLE_HCI_DEVICE_ID=1 melt status).
+// @stoprocent/noble reads this env var natively; no other config needed for single-adapter setups.
 process.env.NOBLE_HCI_DEVICE_ID = process.env.NOBLE_HCI_DEVICE_ID || '0';
 
 const { program } = require('commander');
