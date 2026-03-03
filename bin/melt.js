@@ -334,46 +334,52 @@ program
     console.log();
     const spinner = ora({ text: 'scanning for puffco devices (10s)...', color: 'cyan' }).start();
 
-    const noble = require('@stoprocent/noble');
-    const PUFFCO_SERVICE_UUID = 'e276967fea8a478aa92ed78f5dd15dd5';
-    let found = false;
+    const { exec } = require('child_process');
 
-    noble.on('stateChange', (state) => {
-      if (state === 'poweredOn') {
-        noble.startScanning([], true);
-      } else {
-        spinner.fail(chalk.red('bluetooth is disabled or unavailable'));
+    exec('bluetoothctl devices', (error, stdout, stderr) => {
+      spinner.stop();
+      if (error || !stdout) {
+        console.log(chalk.red('  failed to get devices from bluetoothctl'));
         process.exit(1);
       }
-    });
 
-    noble.on('discover', (peripheral) => {
-      const name = peripheral.advertisement?.localName || 'Unknown';
-      const serviceUuids = (peripheral.advertisement?.serviceUuids || []).map(u => u.toLowerCase().replace(/-/g, ''));
-      const isPuffco = serviceUuids.includes(PUFFCO_SERVICE_UUID);
-      const isProxy = name.toLowerCase().includes('proxy') || name.toLowerCase().includes('puffco');
+      const lines = stdout.split('\n');
+      const devices = [];
 
-      if (isPuffco || isProxy) {
-        if (!found) {
-          spinner.stop();
-          console.log(meltGradient('  Found Devices:'));
-          console.log();
-          found = true;
+      for (const line of lines) {
+        if (!line.startsWith('Device')) continue;
+
+        // Example line: Device F0:AD:4E:48:24:41 Codsworth
+        const parts = line.split(' ');
+        if (parts.length >= 3) {
+          const mac = parts[1];
+          const name = parts.slice(2).join(' ');
+
+          if (name.includes('-') && name.length === 36) continue; // Skip raw UUID names
+
+          devices.push({ mac, name });
         }
-        console.log(`  ${chalk.cyan(peripheral.address)}  ${chalk.gray(name)}`);
       }
-    });
 
-    setTimeout(() => {
-      if (!found) {
-        spinner.fail(chalk.yellow('no devices found'));
+      if (devices.length === 0) {
+        console.log(chalk.yellow('  no devices found in bluetooth cache. try pairing menu first.'));
       } else {
+        console.log(meltGradient('  Known Bluetooth Devices:'));
+        console.log();
+
+        for (const device of devices) {
+          let isLikelyPuffco = device.name.toLowerCase().includes('proxy') || device.name.toLowerCase().includes('puffco');
+          let color = isLikelyPuffco ? chalk.green : chalk.gray;
+          console.log(`  ${chalk.cyan(device.mac)}  ${color(device.name)}`);
+        }
+
         console.log();
         console.log(chalk.gray(`  use: melt config ${chalk.white('<mac>')} to save it`));
         console.log();
       }
+
       process.exit(0);
-    }, 10000);
+    });
   });
 
 // ═══════════════════════════════════════════════════════════════
