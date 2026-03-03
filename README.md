@@ -1,6 +1,6 @@
 # melt
 
-> **⚠️ Status:** The BLE library has been swapped from `@abandonware/noble` to `@stoprocent/noble` for better Linux support. The installer and CLI are verified to work; live device communication is pending further testing. YMMV — please report any issues.
+> **🟢 Status:** The BLE library has been swapped from `@abandonware/noble` to `@stoprocent/noble` for better Linux support, with custom logic to handle BlueZ advertisement filtering, subscription delays, and packet drops. Live device communication is fully tested and working on Linux.
 
 Full melt hash control. Terminal-based Puffco controller.
 
@@ -60,6 +60,29 @@ melt reset        # fix connection issues
 ```bash
 NOBLE_HCI_DEVICE_ID=1 melt status
 ```
+
+**Tip:** If your device has a custom name (e.g., "Codsworth") and isn't being discovered automatically, you can explicitly specify its MAC address:
+
+```bash
+PUFFCO_MAC="f0:ad:4e:48:24:41" melt status
+```
+
+## Troubleshooting
+
+**Cannot connect to the device / `melt` times out:**
+If your Puffco Proxy is already paired with your Linux system via the OS Bluetooth settings (e.g., Gnome/KDE Bluetooth menus or `bluetoothctl`), `melt` will not be able to connect to it. `melt` uses raw HCI sockets (via `noble`) to communicate directly with the device, and the OS Bluetooth manager (BlueZ) will interfere if it considers the device paired.
+
+**To fix this:**
+1. Open your system's Bluetooth settings or run `bluetoothctl`.
+2. **Unpair / Forget** the Puffco Proxy completely. Do not attempt to pair it via the OS Bluetooth menu.
+3. Ensure the Puffco Proxy is powered on.
+4. Run `melt status` — the app will handle the connection automatically without OS-level pairing.
+
+*Note: The Chrome web app works with paired devices because it uses the BlueZ D-Bus API, unlike `melt` which bypasses it for direct hardware access.*
+
+**Device has a custom name and isn't found:**
+If you gave your device a custom name via the official app (e.g., "Codsworth"), it might stop broadcasting the default "Proxy" name and Puffco UUID. You can connect to it directly by finding its MAC address using `bluetoothctl devices` and passing it via the `PUFFCO_MAC` environment variable:
+`PUFFCO_MAC="fa:12:34:56:78:90" melt status`
 
 ## Requirements
 
