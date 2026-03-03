@@ -191,11 +191,7 @@ class PuffcoConnection extends EventEmitter {
     const targetMac = process.env.PUFFCO_MAC ? process.env.PUFFCO_MAC.toLowerCase().replace(/[:-]/g, '') : null;
     const isTargetMac = targetMac && peripheral.address && peripheral.address.toLowerCase().replace(/[:-]/g, '') === targetMac;
 
-    // Check for Codsworth (the user's specific device) as a hardcoded fallback 
-    // since some Puffcos stop advertising the UUID/Name once custom named
-    const isCodsworth = peripheral.address && peripheral.address.toLowerCase() === 'f0:ad:4e:48:24:41';
-
-    if (isPuffco || isProxy || isCodsworth || isTargetMac) {
+    if (isPuffco || isProxy || isTargetMac) {
       this.emit('discovered', peripheral);
     }
   }
