@@ -86,9 +86,16 @@ If you gave your device a custom name via the official app (e.g., "Codsworth"), 
 
 To find your device's MAC address, turn the device on and run:
 ```bash
-bluetoothctl scan on
+bluetoothctl
 ```
-Wait until you see your device's custom name appear in the output. It will look something like `Device F0:AD:4E:48:24:41 My Custom Name`. Press `Ctrl+C` to stop the scan and copy the MAC address (the part that looks like `F0:AD:...`).
+Then, inside the `[bluetooth]#` prompt, type:
+```bash
+scan on
+```
+Wait a few seconds. You will see a stream of nearby devices. Look for your device's custom name to appear, which will look something like this:
+`[NEW] Device F0:AD:4E:48:24:41 My Custom Name`
+
+Type `scan off` and then `exit` to close bluetoothctl. Copy the MAC address (the part that looks like `F0:AD:4E...`).
 
 You can then save **your specific MAC address** to `melt` so it connects automatically every time:
 ```bash
