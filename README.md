@@ -81,8 +81,18 @@ If your Puffco Proxy is already paired with your Linux system via the OS Bluetoo
 *Note: The Chrome web app works with paired devices because it uses the BlueZ D-Bus API, unlike `melt` which bypasses it for direct hardware access.*
 
 **Device has a custom name and isn't found:**
-If you gave your device a custom name via the official app (e.g., "Codsworth"), it might stop broadcasting the default "Proxy" name and Puffco UUID. You can connect to it directly by finding its MAC address using `bluetoothctl devices` and passing it via the `PUFFCO_MAC` environment variable:
-`PUFFCO_MAC="fa:12:34:56:78:90" melt status`
+If you gave your device a custom name via the official app (e.g., "Codsworth"), it might stop broadcasting the default "Proxy" name and Puffco UUID. You can connect to it directly by explicitly passing its MAC address via the `PUFFCO_MAC` environment variable.
+
+To find your device's MAC address, turn the device on and run:
+```bash
+bluetoothctl scan on
+```
+Wait until you see your device's custom name appear in the output (e.g., `Device F0:AD:4E:48:24:41 Codsworth`). Press `Ctrl+C` to stop the scan.
+
+You can then use that MAC address with `melt`:
+```bash
+PUFFCO_MAC="f0:ad:4e:48:24:41" melt status
+```
 
 ## Requirements
 
