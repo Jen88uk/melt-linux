@@ -324,65 +324,6 @@ program
   });
 
 // ═══════════════════════════════════════════════════════════════
-// Scan
-// ═══════════════════════════════════════════════════════════════
-
-program
-  .command('scan')
-  .description('Find nearby Puffco MAC addresses')
-  .action(async () => {
-    console.log();
-    const spinner = ora({ text: 'scanning for puffco devices (10s)...', color: 'cyan' }).start();
-
-    const { exec } = require('child_process');
-
-    exec('bluetoothctl devices', (error, stdout, stderr) => {
-      spinner.stop();
-      if (error || !stdout) {
-        console.log(chalk.red('  failed to get devices from bluetoothctl'));
-        process.exit(1);
-      }
-
-      const lines = stdout.split('\n');
-      const devices = [];
-
-      for (const line of lines) {
-        if (!line.startsWith('Device')) continue;
-
-        // Example line: Device F0:AD:4E:48:24:41 Codsworth
-        const parts = line.split(' ');
-        if (parts.length >= 3) {
-          const mac = parts[1];
-          const name = parts.slice(2).join(' ');
-
-          if (name.includes('-') && name.length === 36) continue; // Skip raw UUID names
-
-          devices.push({ mac, name });
-        }
-      }
-
-      if (devices.length === 0) {
-        console.log(chalk.yellow('  no devices found in bluetooth cache. try pairing menu first.'));
-      } else {
-        console.log(meltGradient('  Known Bluetooth Devices:'));
-        console.log();
-
-        for (const device of devices) {
-          let isLikelyPuffco = device.name.toLowerCase().includes('proxy') || device.name.toLowerCase().includes('puffco');
-          let color = isLikelyPuffco ? chalk.green : chalk.gray;
-          console.log(`  ${chalk.cyan(device.mac)}  ${color(device.name)}`);
-        }
-
-        console.log();
-        console.log(chalk.gray(`  use: melt config ${chalk.white('<mac>')} to save it`));
-        console.log();
-      }
-
-      process.exit(0);
-    });
-  });
-
-// ═══════════════════════════════════════════════════════════════
 // Config
 // ═══════════════════════════════════════════════════════════════
 
@@ -426,7 +367,6 @@ if (process.argv.length === 2) {
   console.log(`  ${chalk.cyan('melt profiles')}   list profiles`);
   console.log(`  ${chalk.cyan('melt stop')}       stop heating`);
   console.log(`  ${chalk.cyan('melt reset')}      fix connection`);
-  console.log(`  ${chalk.cyan('melt scan')}       find nearby puffco mac addresses`);
   console.log(`  ${chalk.cyan('melt config')}     set custom MAC address`);
   console.log();
   process.exit(0);

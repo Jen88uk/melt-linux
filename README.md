@@ -53,7 +53,6 @@ melt profiles     # list heat profiles
 melt heat 0       # heat with profile 0
 melt stop         # stop heating
 melt reset        # fix connection issues
-melt scan         # find nearby puffco mac addresses
 melt config [mac] # set custom MAC address
 ```
 
@@ -87,10 +86,16 @@ If you gave your device a custom name via the official app (e.g., "Codsworth"), 
 
 To find your device's MAC address, turn the device on and run:
 ```bash
-melt scan
+bluetoothctl
 ```
-This will scan the room for 10 seconds and print out any Puffco devices it finds, looking like this:
-`F0:AD:4E:48:24:41  My Custom Name`
+Then, inside the `[bluetooth]#` prompt, type:
+```bash
+scan on
+```
+Wait a few seconds. You will see a stream of nearby devices. Look for your device's custom name to appear, which will look something like this:
+`[NEW] Device F0:AD:4E:48:24:41 My Custom Name`
+
+Type `scan off` and then `exit` to close bluetoothctl. Copy the MAC address (the part that looks like `F0:AD:4E...`).
 
 You can then save **your specific MAC address** to `melt` so it connects automatically every time:
 ```bash
