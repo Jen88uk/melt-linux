@@ -187,8 +187,10 @@ class PuffcoConnection extends EventEmitter {
     const lowerName = name.toLowerCase();
     const isProxy = lowerName.includes('proxy') || lowerName.includes('puffco');
 
-    // Check if user provided a specific MAC address via env var
-    const targetMac = process.env.PUFFCO_MAC ? process.env.PUFFCO_MAC.toLowerCase().replace(/[:-]/g, '') : null;
+    // Check if user provided a specific MAC address via env var or config
+    const { config } = require('../config');
+    const envMac = process.env.PUFFCO_MAC || config.get('customMac');
+    const targetMac = envMac ? envMac.toLowerCase().replace(/[:-]/g, '') : null;
     const isTargetMac = targetMac && peripheral.address && peripheral.address.toLowerCase().replace(/[:-]/g, '') === targetMac;
 
     if (isPuffco || isProxy || isTargetMac) {

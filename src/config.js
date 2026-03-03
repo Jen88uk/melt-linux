@@ -31,7 +31,8 @@ const config = new Conf({
 
     // Device
     lastDeviceId: null,
-    autoConnect: true
+    autoConnect: true,
+    customMac: null
   }
 });
 

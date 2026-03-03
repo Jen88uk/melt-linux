@@ -324,6 +324,37 @@ program
   });
 
 // ═══════════════════════════════════════════════════════════════
+// Config
+// ═══════════════════════════════════════════════════════════════
+
+program
+  .command('config [mac]')
+  .alias('c')
+  .description('Set a specific device MAC address to connect to')
+  .action((mac) => {
+    const { config } = require('../src/config');
+
+    if (mac === 'clear' || mac === 'remove') {
+      config.delete('customMac');
+      console.log(chalk.green('\n  ✓ custom MAC address cleared\n'));
+    } else if (mac) {
+      config.set('customMac', mac);
+      console.log(chalk.green(`\n  ✓ MAC address set to ${mac}\n`));
+    } else {
+      const current = config.get('customMac');
+      console.log();
+      if (current) {
+        console.log(`  MAC address: ${chalk.cyan(current)}`);
+      } else {
+        console.log(chalk.yellow('  No custom MAC address set.'));
+      }
+      console.log(chalk.gray('  usage: melt config f0:ad:4e...'));
+      console.log(chalk.gray('  clear: melt config clear\n'));
+    }
+    process.exit(0);
+  });
+
+// ═══════════════════════════════════════════════════════════════
 // Default (show logo + help)
 // ═══════════════════════════════════════════════════════════════
 
@@ -336,6 +367,7 @@ if (process.argv.length === 2) {
   console.log(`  ${chalk.cyan('melt profiles')}   list profiles`);
   console.log(`  ${chalk.cyan('melt stop')}       stop heating`);
   console.log(`  ${chalk.cyan('melt reset')}      fix connection`);
+  console.log(`  ${chalk.cyan('melt config')}     set custom MAC address`);
   console.log();
   process.exit(0);
 }
