@@ -324,6 +324,59 @@ program
   });
 
 // ═══════════════════════════════════════════════════════════════
+// Scan
+// ═══════════════════════════════════════════════════════════════
+
+program
+  .command('scan')
+  .description('Find nearby Puffco MAC addresses')
+  .action(async () => {
+    console.log();
+    const spinner = ora({ text: 'scanning for puffco devices (10s)...', color: 'cyan' }).start();
+
+    const noble = require('@stoprocent/noble');
+    const PUFFCO_SERVICE_UUID = 'e276967fea8a478aa92ed78f5dd15dd5';
+    let found = false;
+
+    noble.on('stateChange', (state) => {
+      if (state === 'poweredOn') {
+        noble.startScanning([], true);
+      } else {
+        spinner.fail(chalk.red('bluetooth is disabled or unavailable'));
+        process.exit(1);
+      }
+    });
+
+    noble.on('discover', (peripheral) => {
+      const name = peripheral.advertisement?.localName || 'Unknown';
+      const serviceUuids = (peripheral.advertisement?.serviceUuids || []).map(u => u.toLowerCase().replace(/-/g, ''));
+      const isPuffco = serviceUuids.includes(PUFFCO_SERVICE_UUID);
+      const isProxy = name.toLowerCase().includes('proxy') || name.toLowerCase().includes('puffco');
+
+      if (isPuffco || isProxy) {
+        if (!found) {
+          spinner.stop();
+          console.log(meltGradient('  Found Devices:'));
+          console.log();
+          found = true;
+        }
+        console.log(`  ${chalk.cyan(peripheral.address)}  ${chalk.gray(name)}`);
+      }
+    });
+
+    setTimeout(() => {
+      if (!found) {
+        spinner.fail(chalk.yellow('no devices found'));
+      } else {
+        console.log();
+        console.log(chalk.gray(`  use: melt config ${chalk.white('<mac>')} to save it`));
+        console.log();
+      }
+      process.exit(0);
+    }, 10000);
+  });
+
+// ═══════════════════════════════════════════════════════════════
 // Config
 // ═══════════════════════════════════════════════════════════════
 
@@ -367,6 +420,7 @@ if (process.argv.length === 2) {
   console.log(`  ${chalk.cyan('melt profiles')}   list profiles`);
   console.log(`  ${chalk.cyan('melt stop')}       stop heating`);
   console.log(`  ${chalk.cyan('melt reset')}      fix connection`);
+  console.log(`  ${chalk.cyan('melt scan')}       find nearby puffco mac addresses`);
   console.log(`  ${chalk.cyan('melt config')}     set custom MAC address`);
   console.log();
   process.exit(0);
