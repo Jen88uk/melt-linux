@@ -53,11 +53,11 @@ class PuffcoConnection extends EventEmitter {
       });
 
       if (noble.state === 'poweredOn') {
-        noble.startScanning([], false);
+        noble.startScanning([], true);
       } else {
         noble.once('stateChange', (state) => {
           if (state === 'poweredOn') {
-            noble.startScanning([], false);
+            noble.startScanning([], true);
           }
         });
       }
@@ -76,7 +76,10 @@ class PuffcoConnection extends EventEmitter {
     this.deviceName = peripheral.advertisement?.localName || 'Proxy';
 
     return new Promise((resolve, reject) => {
+      const connTimer = setTimeout(() => reject(new Error('Connection timed out after 10s')), 10000);
+
       peripheral.connect(async (err) => {
+        clearTimeout(connTimer);
         if (err) {
           reject(err);
           return;
@@ -142,8 +145,9 @@ class PuffcoConnection extends EventEmitter {
         return;
       }
 
-      // Write without response for speed
-      cmdChar.write(Buffer.from(data), true, (err) => {
+      // Note: writeWithoutResponse drops packets on some Linux/BlueZ configurations.
+      // We write with response (false) here for compatibility and reliability.
+      cmdChar.write(Buffer.from(data), false, (err) => {
         if (err) {
           clearTimeout(timer);
           this.pendingResponses.delete(seq);
@@ -179,10 +183,19 @@ class PuffcoConnection extends EventEmitter {
     const PUFFCO_SERVICE_UUID = 'e276967fea8a478aa92ed78f5dd15dd5';
     const isPuffco = serviceUuids.includes(PUFFCO_SERVICE_UUID);
 
-    // Fallback: original name-based match for proxy-mode devices
-    const isProxy = name.toLowerCase().includes('proxy');
+    // Fallback: original name-based match for proxy-mode devices or custom names
+    const lowerName = name.toLowerCase();
+    const isProxy = lowerName.includes('proxy') || lowerName.includes('puffco');
 
-    if (isPuffco || isProxy) {
+    // Check if user provided a specific MAC address via env var
+    const targetMac = process.env.PUFFCO_MAC ? process.env.PUFFCO_MAC.toLowerCase().replace(/[:-]/g, '') : null;
+    const isTargetMac = targetMac && peripheral.address && peripheral.address.toLowerCase().replace(/[:-]/g, '') === targetMac;
+
+    // Check for Codsworth (the user's specific device) as a hardcoded fallback 
+    // since some Puffcos stop advertising the UUID/Name once custom named
+    const isCodsworth = peripheral.address && peripheral.address.toLowerCase() === 'f0:ad:4e:48:24:41';
+
+    if (isPuffco || isProxy || isCodsworth || isTargetMac) {
       this.emit('discovered', peripheral);
     }
   }
@@ -224,25 +237,32 @@ class PuffcoConnection extends EventEmitter {
   }
 
   async _subscribe() {
+    // Add a small delay which helps some devices stabilize after discovery
+    await new Promise(r => setTimeout(r, 500));
+
     const responseChar = this.characteristics['response'];
     if (!responseChar) {
       throw new Error('Response characteristic not found');
     }
 
-    // Subscribe to response characteristic
+    // Subscribe to response characteristic with timeout
     await new Promise((resolve, reject) => {
+      const subTimer = setTimeout(() => {
+        resolve(); // Continue even if confirmation times out (BlueZ bug workaround)
+      }, 3000);
+
       responseChar.subscribe((err) => {
+        clearTimeout(subTimer);
         if (err) {
           reject(err);
           return;
         }
-
-        responseChar.on('data', (data) => {
-          this._onNotification(data);
-        });
-
         resolve();
       });
+    });
+
+    responseChar.on('data', (data) => {
+      this._onNotification(data);
     });
 
     // Also subscribe to notify_alt characteristic (43312cd1-7d34-46ce-a7d3-0a98fd9b4cb8)
@@ -250,18 +270,21 @@ class PuffcoConnection extends EventEmitter {
       this.characteristics['43312cd1-7d34-46ce-a7d3-0a98fd9b4cb8'];
     if (notifyAltChar) {
       await new Promise((resolve, reject) => {
+        const altTimer = setTimeout(() => {
+          resolve();
+        }, 3000);
+
         notifyAltChar.subscribe((err) => {
+          clearTimeout(altTimer);
           if (err) {
-            // Non-fatal, just log
-            console.error('Failed to subscribe to notify_alt:', err.message);
-            resolve();
-            return;
+            // console.error('Failed to subscribe to notify_alt:', err.message);
           }
-          notifyAltChar.on('data', (data) => {
-            this.emit('event', data);
-          });
           resolve();
         });
+      });
+
+      notifyAltChar.on('data', (data) => {
+        this.emit('event', data);
       });
     }
   }
