@@ -88,11 +88,11 @@ To find your device's MAC address, turn the device on and run:
 ```bash
 bluetoothctl scan on
 ```
-Wait until you see your device's custom name appear in the output (e.g., `Device F0:AD:4E:48:24:41 Codsworth`). Press `Ctrl+C` to stop the scan.
+Wait until you see your device's custom name appear in the output. It will look something like `Device F0:AD:4E:48:24:41 My Custom Name`. Press `Ctrl+C` to stop the scan and copy the MAC address (the part that looks like `F0:AD:...`).
 
-You can then save that MAC address to `melt` so it connects automatically every time:
+You can then save **your specific MAC address** to `melt` so it connects automatically every time:
 ```bash
-melt config f0:ad:4e:48:24:41
+melt config YOUR:MAC:ADDRESS:HERE
 melt status
 ```
 *(You can also use the `PUFFCO_MAC="fa..." melt status` environment variable if you prefer not to save it globally).*
